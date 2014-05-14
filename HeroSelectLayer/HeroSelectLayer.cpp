@@ -159,11 +159,21 @@ bool HeroSelectLayer::ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *p
     h_TouchCurPoint = h_TouchDownPoint;
     //灵魂石获取途径窗口
     CCSprite *soulstone = (CCSprite *)node->getChildByTag(106);
+    CCSprite *jinjie = (CCSprite *)node->getChildByTag(109);
+    CCSprite *xxjineng = (CCSprite *)node->getChildByTag(112);
     if(soulstone->boundingBox().containsPoint(h_TouchDownPoint)){
         CCLOG("灵魂石获取途径-------");
         HeroSSpathLayer* _sspath = HeroSSpathLayer::create();
         this->addChild(_sspath);
         
+    }else if(jinjie->boundingBox().containsPoint(h_TouchDownPoint)){
+        CCLOG("进阶界面-------");
+        HeroJJLayer* _jjlayer = HeroJJLayer::create();
+        this->addChild(_jjlayer);
+    }else if(xxjineng->boundingBox().containsPoint(h_TouchDownPoint)){
+        CCSprite * sxAndjn = (CCSprite *)node->getChildByTag(110);
+        CCOrbitCamera *c1 = CCOrbitCamera::create(2, 1, 0, 0, 180, 0, 0);
+        sxAndjn->runAction(c1);
     }
     return true;
     //探索条件

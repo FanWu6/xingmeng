@@ -13,8 +13,9 @@
 #include "HeroSelectContent.h"
 #include "HeroSelectScrollView.h"
 #include "Playerinfo.h"
-#include "CocosWidget/cocos-widget.h"
+#include "cocos-widget.h"
 #include "HeroSSpathLayer.h"
+#include "HeroJJLayer.h"
 using namespace cocos2d::cocoswidget;
 USING_NS_CC;
 
