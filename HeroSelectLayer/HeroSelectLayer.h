@@ -16,6 +16,7 @@
 #include "cocos-widget.h"
 #include "HeroSSpathLayer.h"
 #include "HeroJJLayer.h"
+#include "HeroSkillLayer.h"
 using namespace cocos2d::cocoswidget;
 USING_NS_CC;
 
@@ -47,6 +48,15 @@ public:
     void changeData();
     int curPage;
     int curOnlyID[20];
+    //skillcallback
+    HeroSkillLayer *_skillLayer;
+    void skillCallback();
+    bool isSkillLayer;
+    bool isbutton;
+    void shuxingCallback();
+    //
+    void setVisTrue();
+    void setVisFalse();
 private:
     // 按下点
     CCPoint h_TouchDownPoint;

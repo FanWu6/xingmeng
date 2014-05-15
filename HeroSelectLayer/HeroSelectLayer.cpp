@@ -59,6 +59,11 @@ void HeroSelectLayer::initData(){
     curPage = 0;//当前页
     _pinfo = new Playerinfo();//用户数据
     //
+    _skillLayer = HeroSkillLayer::create();
+    this->addChild(_skillLayer);
+//    _skillLayer = NULL;
+    isSkillLayer = false;
+    isbutton = true;
 
 }
 
@@ -161,6 +166,7 @@ bool HeroSelectLayer::ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *p
     CCSprite *soulstone = (CCSprite *)node->getChildByTag(106);
     CCSprite *jinjie = (CCSprite *)node->getChildByTag(109);
     CCSprite *xxjineng = (CCSprite *)node->getChildByTag(112);
+    CCSprite *xxshuxing = (CCSprite *)node->getChildByTag(113);
     if(soulstone->boundingBox().containsPoint(h_TouchDownPoint)){
         CCLOG("灵魂石获取途径-------");
         HeroSSpathLayer* _sspath = HeroSSpathLayer::create();
@@ -170,13 +176,64 @@ bool HeroSelectLayer::ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *p
         CCLOG("进阶界面-------");
         HeroJJLayer* _jjlayer = HeroJJLayer::create();
         this->addChild(_jjlayer);
-    }else if(xxjineng->boundingBox().containsPoint(h_TouchDownPoint)){
+    }else if(xxjineng->boundingBox().containsPoint(h_TouchDownPoint)&&isbutton&&!isSkillLayer){
+        isbutton = false;
         CCSprite * sxAndjn = (CCSprite *)node->getChildByTag(110);
-        CCOrbitCamera *c1 = CCOrbitCamera::create(2, 1, 0, 0, 180, 0, 0);
-        sxAndjn->runAction(c1);
+        
+            sxAndjn->setScaleX(1);
+            CCOrbitCamera *c1 = CCOrbitCamera::create(2, 1, 0, 0, 180, 0, 0);
+            CCLOG("2");
+        CCDelayTime *delay = CCDelayTime::create(1.35);
+        CCCallFuncN * skillCallback = CCCallFuncN::create(this, callfuncN_selector(HeroSelectLayer::skillCallback));
+        CCCallFuncN * setvisfalse = CCCallFuncN::create(this, callfuncN_selector(HeroSelectLayer::setVisFalse));
+        sxAndjn->runAction(CCSequence::create(c1,skillCallback,NULL));
+        sxAndjn->runAction(CCSequence::create(delay,setvisfalse,NULL));
+        _skillLayer->reverseSkill();
+        
+    }else if(xxshuxing->boundingBox().containsPoint(h_TouchDownPoint)&&isbutton&&isSkillLayer){
+        if(isSkillLayer){
+            
+            CCSprite * sxAndjn = (CCSprite *)node->getChildByTag(110);
+            sxAndjn->setScaleX(-1);
+            CCDelayTime *delay = CCDelayTime::create(1.35);
+            CCOrbitCamera *c1 = CCOrbitCamera::create(2, 1, 0, 0, -180, 0, 0);
+            CCLOG("1");
+            CCCallFuncN * shuxingCallback = CCCallFuncN::create(this, callfuncN_selector(HeroSelectLayer::shuxingCallback));
+             CCCallFuncN * setvistrue = CCCallFuncN::create(this, callfuncN_selector(HeroSelectLayer::setVisTrue));
+            sxAndjn->runAction(CCSequence::create(c1,shuxingCallback,NULL));
+            sxAndjn->runAction(CCSequence::create(delay,setvistrue,NULL));
+            _skillLayer->reverseSkill();
+
+        }
     }
     return true;
     //探索条件
+}
+
+void HeroSelectLayer::setVisTrue(){
+    CCSprite * sxAndjn = (CCSprite *)node->getChildByTag(110);
+    sxAndjn->setVisible(true);
+}
+
+void HeroSelectLayer::setVisFalse(){
+    CCSprite * sxAndjn = (CCSprite *)node->getChildByTag(110);
+    sxAndjn->setVisible(false);
+}
+
+void HeroSelectLayer::skillCallback(){
+    isbutton = true;
+//    CCSprite * sxAndjn = (CCSprite *)node->getChildByTag(110);
+    isSkillLayer=!isSkillLayer;
+
+    
+//    sxAndjn->setScaleX(1);
+//    CCSprite * sxAndjn = (CCSprite *)node->getChildByTag(110);
+//    sxAndjn->setVisible(false);
+//    isSkillLayer = true;
+}
+
+void HeroSelectLayer::shuxingCallback(){
+    isSkillLayer = false;
 }
 
 void HeroSelectLayer::ccTouchEnded(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pEvent){
