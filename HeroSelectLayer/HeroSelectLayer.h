@@ -45,7 +45,11 @@ public:
     //{
     //}
     void addScroll();
-    void changeData();
+    void changeData();//更新数据
+    //
+    void stonelvlup();//灵魂石进阶更新
+    CCTexture2D *_sstiao;
+    //
     int curPage;
     int curOnlyID[20];
     //skillcallback
@@ -57,6 +61,7 @@ public:
     //
     void setVisTrue();
     void setVisFalse();
+ 
 private:
     // 按下点
     CCPoint h_TouchDownPoint;

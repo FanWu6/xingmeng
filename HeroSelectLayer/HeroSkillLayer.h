@@ -12,6 +12,7 @@
 #include "cocos2d.h"
 #include "Config.h"
 #include "Playerinfo.h"
+#include "GoodsData.h"
 USING_NS_CC;
 class HeroSkillLayer: public CCLayer
 {
@@ -44,8 +45,18 @@ public:
     
     void setVisTrue();
     void setVisFalse();
+    
+    virtual void update(float dt);
+    int curPage;
+    void changeData();
 public:
     CCNode * node2;
+    
+public:
+    SkillData *_skillData;
+    BigSkillData *_bigskillData;
+private:
+    Playerinfo *_pinfo;
     
 };
 

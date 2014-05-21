@@ -37,9 +37,15 @@ public:
     void backonClick();
     bool layervisable;
     CCMenu *menu;
+    void changeData();
+    int curPage;
+    void initData();
 private:
     CCNode * node;
+private:
+    vector<BattleAttackXmlDataBase> attack_data;
     
+    Playerinfo *_pinfo;
 };
 
 #endif /* defined(__hello__HeroSSpathLayer__) */

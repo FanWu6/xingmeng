@@ -45,6 +45,7 @@ bool HeroSelectLayer::init(){
     scheduleUpdate();
     addScroll();
     addSprite();
+    changeData();
 
     return true;
 }
@@ -69,11 +70,12 @@ void HeroSelectLayer::initData(){
 
 
 void HeroSelectLayer::addSprite(){
-    //灵魂石层
-    
     //
     CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("heroSelect.plist");
     CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("headPic.plist");
+
+    //灵魂石层
+    _sstiao = CCTextureCache::sharedTextureCache()->addImage("soulstonetiao1.png");
     //bg
     CCSprite* bg = CCSprite::create("bg.png");
     this->addChild(bg);
@@ -88,20 +90,7 @@ void HeroSelectLayer::addSprite(){
     }
     CCLabelTTF *name = (CCLabelTTF *)node->getChildByTag(102);
     name->setString(string->getCString());
-    
-    
-    
-    
-//    shuxingFrame = CButton::create();
-//    shuxingFrame->setNormalSpriteFrameName("shuxing_frame.png");
-//    shuxingFrame->setPosition(ccp(700,148));
-//    shuxingFrame->setOnClickListener(this, ccw_click_selector(HeroSelectLayer::shuxingonClick));
-//    shuxingFrame = CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("shuxing_frame.png"));
-//    shuxingFrame->setAnchorPoint(ccp(0.5,0.5));
-//    shuxingFrame->setPosition(ccp(700,148));
-//    CCOrbitCamera *c1 = CCOrbitCamera::create(2, 1, 0, 0, 180, 0, 0);
-//    shuxingFrame->runAction(c1);
-//    this->addChild(shuxingFrame,1);
+
 }
 
 //void HeroSelectContentLayer::shuxingonClick(CCObject* pSender){
@@ -125,29 +114,6 @@ void HeroSelectLayer::addScroll(){
 
 }
 
-void HeroSelectLayer::changeData(){
-// CCString *string = CCString::createWithFormat("%d", curOnlyID[config->heroPage]);
-    //名字更新
-    CCString *string_name;
-    if(_pinfo->player_vec[config->heroPage].isOwned){
-         string_name= CCString::createWithFormat("%s", attack_data[config->heroPage].name);
-    }else {
-        string_name = CCString::createWithFormat("%s", "???");
-    }
-    CCLabelTTF *name = (CCLabelTTF *)node->getChildByTag(102);
-    name->setString(string_name->getCString());
-    //头像更新
-    CCString *string_head;
-    if(_pinfo->player_vec[config->heroPage].isOwned){
-        string_head= CCString::createWithFormat("%s.png", attack_data[config->heroPage].nameStrId);
-    }else {
-        string_head = CCString::createWithFormat("%s.png", "MMwolfman");
-    }
-    CCSprite *headpic = (CCSprite *)node->getChildByTag(101);
-    headpic->initWithFile(string_head->getCString());
-
-}
-
 void HeroSelectLayer::onEnter(){
     CCLayer::onEnter();//有menu和CCTouch必须添加
 //    CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, -129, false);
@@ -163,6 +129,7 @@ bool HeroSelectLayer::ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *p
     h_TouchDownPoint = CCDirector::sharedDirector()->convertToGL(pTouch->getLocationInView());
     h_TouchCurPoint = h_TouchDownPoint;
     //灵魂石获取途径窗口
+    CCSprite *addstone = (CCSprite *)node->getChildByTag(104);
     CCSprite *soulstone = (CCSprite *)node->getChildByTag(106);
     CCSprite *jinjie = (CCSprite *)node->getChildByTag(109);
     CCSprite *xxjineng = (CCSprite *)node->getChildByTag(112);
@@ -172,6 +139,11 @@ bool HeroSelectLayer::ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *p
         HeroSSpathLayer* _sspath = HeroSSpathLayer::create();
         this->addChild(_sspath);
         
+    }else if(addstone->boundingBox().containsPoint(h_TouchDownPoint)){
+        CCLOG("增加灵魂石-------");
+    if((_pinfo->player_vec[config->heroPage].stone_rate)<(attack_data[config->heroPage]._heroStone+20*(_pinfo->player_vec[config->heroPage].hero_level-1))){
+        _pinfo->player_vec[config->heroPage].stone_rate +=1;
+        }
     }else if(jinjie->boundingBox().containsPoint(h_TouchDownPoint)){
         CCLOG("进阶界面-------");
         HeroJJLayer* _jjlayer = HeroJJLayer::create();
@@ -192,7 +164,7 @@ bool HeroSelectLayer::ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *p
         
     }else if(xxshuxing->boundingBox().containsPoint(h_TouchDownPoint)&&isbutton&&isSkillLayer){
         if(isSkillLayer){
-            
+            isbutton = false;
             CCSprite * sxAndjn = (CCSprite *)node->getChildByTag(110);
             sxAndjn->setScaleX(-1);
             CCDelayTime *delay = CCDelayTime::create(1.35);
@@ -233,7 +205,8 @@ void HeroSelectLayer::skillCallback(){
 }
 
 void HeroSelectLayer::shuxingCallback(){
-    isSkillLayer = false;
+    isbutton = true;
+    isSkillLayer=!isSkillLayer;
 }
 
 void HeroSelectLayer::ccTouchEnded(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pEvent){
@@ -263,3 +236,149 @@ void HeroSelectLayer::update(float dt){
     }
     
 }
+
+void HeroSelectLayer::changeData(){
+    // CCString *string = CCString::createWithFormat("%d", curOnlyID[config->heroPage]);
+    //名字更新
+    CCString *string_name;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_name= CCString::createWithFormat("%s", attack_data[config->heroPage].name);
+    }else {
+        string_name = CCString::createWithFormat("%s", "???");
+    }
+    CCLabelTTF *name = (CCLabelTTF *)node->getChildByTag(102);
+    name->setString(string_name->getCString());
+    
+    //头像更新
+    CCString *string_head;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_head= CCString::createWithFormat("%s.png", attack_data[config->heroPage].nameStrId);
+    }else {
+        string_head = CCString::createWithFormat("%s.png", "MMwolfman");
+    }
+    CCSprite *headpic = (CCSprite *)node->getChildByTag(101);
+    headpic->initWithFile(string_head->getCString());
+    
+    //等级更新
+    CCString *string_lvl;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_lvl= CCString::createWithFormat("%d", _pinfo->player_vec[config->heroPage].hero_level);
+    }else {
+        string_lvl = CCString::createWithFormat("%s", "???");
+    }
+    CCLabelTTF *lvl = (CCLabelTTF *)node->getChildByTag(114);
+    lvl->setString(string_lvl->getCString());
+    
+    //经验更新
+    CCString *string_exp;
+    int cur_exp = _pinfo->player_vec[config->heroPage].hero_exp;
+    int lvlup_exp = 10*(_pinfo->player_vec[config->heroPage].hero_level)*(_pinfo->player_vec[config->heroPage].hero_level)+80;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_exp= CCString::createWithFormat("%d/%d",cur_exp,lvlup_exp);
+    }else {
+        string_exp = CCString::createWithFormat("%s", "???");
+    }
+    CCLabelTTF *exp = (CCLabelTTF *)node->getChildByTag(115);
+    exp->setString(string_exp->getCString());
+    
+    //灵魂石进阶更新
+    stonelvlup();
+    
+    //星级更新
+    for(int index = 116;index<126;index++){
+        CCSprite *star = (CCSprite*)node->getChildByTag(index);
+        star->setVisible(false);
+    }
+    for(int index = 116;index<116+_pinfo->player_vec[config->heroPage].star_level;index++){
+        CCSprite *star = (CCSprite*)node->getChildByTag(index);
+        star->setVisible(true);
+    }
+    
+    //英雄介绍
+    CCString *string_info;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_info= CCString::createWithFormat("%s", attack_data[config->heroPage]._heroInfo);
+    }else {
+        string_info = CCString::createWithFormat("%s", "???");
+    }
+    CCLabelTTF *info = (CCLabelTTF *)node->getChildByTag(110)->getChildByTag(1);
+    info->setString(string_info->getCString());
+    
+    //属性更新
+    //-------HP
+    CCString *string_hp;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_hp= CCString::createWithFormat("%d+", attack_data[config->heroPage]._init_hp);
+    }else {
+        string_hp = CCString::createWithFormat("%s", "???+");
+    }
+    CCLabelTTF *hp = (CCLabelTTF *)node->getChildByTag(110)->getChildByTag(2);
+    hp->setString(string_hp->getCString());
+    
+    CCString *string_hp2;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_hp2= CCString::createWithFormat("%d", (attack_data[config->heroPage]._init_hp)*(int)(attack_data[config->heroPage]._hpAdrate)*(_pinfo->player_vec[config->heroPage].star_level));
+    }else {
+        string_hp2 = CCString::createWithFormat("%s", "???");
+    }
+    CCLabelTTF *hp2 = (CCLabelTTF *)node->getChildByTag(110)->getChildByTag(7);
+    hp2->setPositionX(hp->getPositionX()+hp->getContentSize().width);
+    hp2->setString(string_hp2->getCString());
+    //------AP
+    CCString *string_ap;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_ap = CCString::createWithFormat("%d+",attack_data[config->heroPage]._init_attack);
+    }else {
+        string_ap = CCString::createWithFormat("%s","???+");
+    }
+    CCLabelTTF *ap = (CCLabelTTF *)node->getChildByTag(110)->getChildByTag(3);
+    ap->setString(string_ap->getCString());
+    
+    CCString *string_ap2;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_ap2 = CCString::createWithFormat("%d",(attack_data[config->heroPage]._init_attack)*(int)(attack_data[config->heroPage]._apAdrate)*(_pinfo->player_vec[config->heroPage].star_level));
+    }else {
+        string_ap2 = CCString::createWithFormat("%s","???");
+    }
+    CCLabelTTF *ap2 = (CCLabelTTF *)node->getChildByTag(110)->getChildByTag(8);
+    ap2->setString(string_ap2->getCString());
+    ap2->setPositionX(ap->getPositionX()+ap->getContentSize().width);
+    
+    //------ASP
+    CCString *string_asp;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_asp = CCString::createWithFormat("%d",attack_data[config->heroPage]._attack_speed);
+    }else {
+        string_asp = CCString::createWithFormat("%s","???");
+    }
+    CCLabelTTF *asp = (CCLabelTTF *)node->getChildByTag(110)->getChildByTag(4);
+    asp->setString(string_asp->getCString());
+    
+    //-----ADS
+    CCString *string_ads;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_ads = CCString::createWithFormat("%d",attack_data[config->heroPage]._attack_range);
+    }else {
+        string_ads = CCString::createWithFormat("%s","???");
+    }
+    CCLabelTTF *ads = (CCLabelTTF *)node->getChildByTag(110)->getChildByTag(5);
+    ads->setString(string_ads->getCString());
+    
+    //-----SP
+    CCString *string_sp;
+    if(_pinfo->player_vec[config->heroPage].isOwned){
+        string_sp = CCString::createWithFormat("%d",attack_data[config->heroPage]._move_speed);
+    }else {
+        string_sp = CCString::createWithFormat("%s","???");
+    }
+    CCLabelTTF *sp = (CCLabelTTF *)node->getChildByTag(110)->getChildByTag(6);
+    sp->setString(string_sp->getCString());
+}
+
+void HeroSelectLayer::stonelvlup(){
+    CCSprite *sstiao = (CCSprite *)node->getChildByTag(108);
+    float rate = ((float)(_pinfo->player_vec[config->heroPage].stone_rate)/(float)(attack_data[config->heroPage]._heroStone+20*(_pinfo->player_vec[config->heroPage].hero_level-1)) );
+    sstiao->initWithTexture(_sstiao,CCRectMake(0, 0, rate*206 , 20));
+    sstiao->setAnchorPoint(ccp(0,1));
+}
+

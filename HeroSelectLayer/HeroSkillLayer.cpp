@@ -35,18 +35,20 @@ bool HeroSkillLayer::init(){
     node2 = ccbReader->readNodeGraphFromFile("ccbi/HeroSkillccbi.ccbi", this);
     if(node2 != NULL) {
         this->addChild(node2);
-        node2->setTag(1);
     }
     this->setVisible(false);
     isSkillLayer = true;
     layervisable = false;
+    curPage = 0;//当前页
     addsprite();
+    changeData();
+    scheduleUpdate();
     return true;
 }
 
 void HeroSkillLayer::addsprite(){
     
-//    CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("jjLayer.plist");
+    CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("headPic.plist");
 //    CCSprite *jjcancel = cocos2d::CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("jjcancel.png"));
 //    CCSprite *jjcancel_click = cocos2d::CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("jjcancel.png_click_s.png"));
 //    CCMenuItemSprite *back = CCMenuItemSprite::create(jjcancel, jjcancel_click,this,menu_selector(HeroJJLayer::backonClick));
@@ -136,4 +138,24 @@ void HeroSkillLayer::ccTouchEnded(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pE
 bool HeroSkillLayer::ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pEvent)
 {
     return true;
+}
+
+void HeroSkillLayer::update(float dt){
+    if(curPage != config->heroPage){
+        curPage = config->heroPage;
+        changeData();
+    }
+    
+}
+
+void HeroSkillLayer::changeData(){
+    //------技能1更新
+    //技能1图标
+    _skillData = (SkillData *)m_skillList->objectAtIndex(config->heroPage);
+    CCSprite *skillspr1 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(1);
+    CCString *string_spr1 = CCString::createWithFormat("%s",_skillData->m_icon);
+    CCLOG("--------%s",_skillData->m_icon);
+    skillspr1->initWithFile(string_spr1->getCString());
+    
+    
 }
