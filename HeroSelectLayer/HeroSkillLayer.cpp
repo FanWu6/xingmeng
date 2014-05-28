@@ -49,14 +49,8 @@ bool HeroSkillLayer::init(){
 void HeroSkillLayer::addsprite(){
     
     CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("headPic.plist");
-//    CCSprite *jjcancel = cocos2d::CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("jjcancel.png"));
-//    CCSprite *jjcancel_click = cocos2d::CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("jjcancel.png_click_s.png"));
-//    CCMenuItemSprite *back = CCMenuItemSprite::create(jjcancel, jjcancel_click,this,menu_selector(HeroJJLayer::backonClick));
-//    menu = CCMenu::create(back,NULL);
-//    //    menu->setAnchorPoint(ccp(0, 0));
-//    menu->setPosition(ccp(501, 318));
-//    this->addChild(menu);
-//    menu->setZOrder(10);
+    _pinfo = new Playerinfo();//用户数据
+    //技能属性1
 }
 
 void HeroSkillLayer::backonClick(){
@@ -137,25 +131,87 @@ void HeroSkillLayer::ccTouchEnded(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pE
 
 bool HeroSkillLayer::ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pEvent)
 {
+    //
+    CCLOG("技能");
     return true;
 }
 
 void HeroSkillLayer::update(float dt){
     if(curPage != config->heroPage){
         curPage = config->heroPage;
+        scrolllabel1->removeFromParentAndCleanup(true);
+        scrolllabel2->removeFromParentAndCleanup(true);
         changeData();
     }
     
 }
 
 void HeroSkillLayer::changeData(){
+     _skillData = (SkillData *)m_skillList->objectAtIndex(config->heroPage);
+    _bigskillData = (BigSkillData *)m_bigSkillList->objectAtIndex(config->heroPage);
     //------技能1更新
     //技能1图标
-    _skillData = (SkillData *)m_skillList->objectAtIndex(config->heroPage);
     CCSprite *skillspr1 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(1);
     CCString *string_spr1 = CCString::createWithFormat("%s",_skillData->m_icon);
-    CCLOG("--------%s",_skillData->m_icon);
     skillspr1->initWithFile(string_spr1->getCString());
-    
+    //技能1名称
+    CCLabelTTF *skillname1 = (CCLabelTTF *)node2->getChildByTag(200)->getChildByTag(2);
+    CCString *string_name1 = CCString::createWithFormat("%s",_skillData->m_name);
+    skillname1->setString(string_name1->getCString());
+    //技能1说明
+    CCSprite *skillinfo1 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(4);
+    CCString *string_info1 = CCString::createWithFormat("%s",_skillData->m_info);
+    CCSize size = skillinfo1->getContentSize();
+    scrolllabel1 = XJScrollLabel::create(string_info1->getCString(), "Helvetica", 12, kCCTextAlignmentLeft,CCSizeMake(size.width, size.height*0.7f),120);
+    node2->getChildByTag(200)->addChild(scrolllabel1);
+    scrolllabel1->setPosition(ccp(30,155));
+    //技能1状态更新
+    if(_pinfo->player_vec[config->heroPage].star_level >=2){
+        CCLabelTTF *tiaojian1 = (CCLabelTTF *)node2->getChildByTag(200)->getChildByTag(3);
+        tiaojian1->setOpacity(0);
+         CCSprite *gold1 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(5);
+        gold1->setVisible(true);
+         CCSprite *add1 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(11);
+        add1->setOpacity(255);
+    }else{
+        CCLabelTTF *tiaojian1 = (CCLabelTTF *)node2->getChildByTag(200)->getChildByTag(3);
+        tiaojian1->setOpacity(255);
+        CCSprite *gold1 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(5);
+        gold1->setVisible(false);
+        CCSprite *add1 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(11);
+        add1->setOpacity(0);
+    }
+    //-----技能2更新
+    //技能2图标
+    CCSprite *skillspr2 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(6);
+    CCString *string_spr2 = CCString::createWithFormat("%s",_bigskillData->m_icon);
+    skillspr2->initWithFile(string_spr2->getCString());
+    //技能2名称
+    CCLabelTTF *skillname2 = (CCLabelTTF *)node2->getChildByTag(200)->getChildByTag(7);
+    CCString *string_name2 = CCString::createWithFormat("%s",_bigskillData->m_name);
+    skillname2->setString(string_name2->getCString());
+    //技能2说明
+    CCSprite *skillinfo2 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(4);
+    CCString *string_info2 = CCString::createWithFormat("%s",_bigskillData->m_info);
+    CCSize size2 = skillinfo2->getContentSize();
+    scrolllabel2 = XJScrollLabel::create(string_info2->getCString(), "Helvetica", 12, kCCTextAlignmentLeft,CCSizeMake(size2.width, size2.height*0.7f),120);
+    node2->getChildByTag(200)->addChild(scrolllabel2);
+    scrolllabel2->setPosition(ccp(30,30));
+    //技能2状态更新
+    if(_pinfo->player_vec[config->heroPage].star_level >=5){
+        CCLabelTTF *tiaojian2 = (CCLabelTTF *)node2->getChildByTag(200)->getChildByTag(8);
+        tiaojian2->setOpacity(0);
+        CCSprite *gold2 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(10);
+        gold2->setVisible(true);
+        CCSprite *add2 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(12);
+        add2->setOpacity(255);
+    }else{
+        CCLabelTTF *tiaojian2 = (CCLabelTTF *)node2->getChildByTag(200)->getChildByTag(8);
+        tiaojian2->setOpacity(255);
+        CCSprite *gold2 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(10);
+        gold2->setVisible(false);
+        CCSprite *add2 = (CCSprite *)node2->getChildByTag(200)->getChildByTag(12);
+        add2->setOpacity(0);
+    }
     
 }

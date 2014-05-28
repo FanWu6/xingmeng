@@ -61,8 +61,8 @@ void HeroSelectContentLayer::initSelectDate(){
     spritehero->getAnimation()->play("stand");
     if(!p_info->player_vec[tag].isOwned){
         spritehero->setColor(ccc3(0,0,0));
-        ccBlendFunc cbl = {GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA};
-        spritehero->setBlendFunc(cbl);
+//        ccBlendFunc cbl = {GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA};
+//        spritehero->setBlendFunc(cbl);
     }
     //
     float _s = 90.0f/attack_data[tag].box_h;

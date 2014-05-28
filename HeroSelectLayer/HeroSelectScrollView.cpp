@@ -210,10 +210,12 @@ void HeroScrollView::update(float dt){
     for(int i = 0;i<m_Page;i++){
         CCPoint popos = this->convertToWorldSpace( ((CCLayer*) m_PageLayer->objectAtIndex(i))->getChildByTag(i + 40)->getPosition());
         float scale = 1-((fabsf(popos.x-400.0f)/400.0f)*(fabsf(popos.x-400.0f)/400.0f));
+        if(scale>0){
             ((CCLayer*) m_PageLayer->objectAtIndex(i))->getChildByTag(i + 40)->setScale(scale);
         ((CCLayer*) m_PageLayer->objectAtIndex(i))->getChildByTag(i + 40)->setPositionY(240+(1-scale)*100);
 
         CCSprite *xx = (CCSprite *)((CCLayer*) m_PageLayer->objectAtIndex(i))->getChildByTag(i + 40);
         xx->setOpacity(255*scale);
+        }
     }
 }

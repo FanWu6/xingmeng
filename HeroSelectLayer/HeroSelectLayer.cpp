@@ -65,7 +65,6 @@ void HeroSelectLayer::initData(){
 //    _skillLayer = NULL;
     isSkillLayer = false;
     isbutton = true;
-
 }
 
 
@@ -145,9 +144,15 @@ bool HeroSelectLayer::ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *p
         _pinfo->player_vec[config->heroPage].stone_rate +=1;
         }
     }else if(jinjie->boundingBox().containsPoint(h_TouchDownPoint)){
-        CCLOG("进阶界面-------");
+        CCLOG("进阶&招募界面-------");
+        if(_pinfo->player_vec[config->heroPage].isOwned){
         HeroJJLayer* _jjlayer = HeroJJLayer::create();
         this->addChild(_jjlayer);
+        }else{
+            _pinfo->player_vec[config->heroPage].isOwned = true;
+            CCSprite *herospr = (CCSprite *)scroll->getChildByTag(config->heroPage)->getChildByTag(40+config->heroPage);
+            herospr->setColor(ccc3(255,255,255));
+        }
     }else if(xxjineng->boundingBox().containsPoint(h_TouchDownPoint)&&isbutton&&!isSkillLayer){
         isbutton = false;
         CCSprite * sxAndjn = (CCSprite *)node->getChildByTag(110);
@@ -292,6 +297,13 @@ void HeroSelectLayer::changeData(){
     for(int index = 116;index<116+_pinfo->player_vec[config->heroPage].star_level;index++){
         CCSprite *star = (CCSprite*)node->getChildByTag(index);
         star->setVisible(true);
+    }
+    //进阶&招募
+     CCSprite *jinjie = (CCSprite *)node->getChildByTag(109);
+    if(!_pinfo->player_vec[config->heroPage].isOwned){
+        jinjie->initWithFile("zhaomu.png");
+    }else{
+        jinjie->initWithFile("jinjie.png");
     }
     
     //英雄介绍

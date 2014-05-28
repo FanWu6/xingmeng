@@ -13,6 +13,7 @@
 #include "Config.h"
 #include "Playerinfo.h"
 #include "GoodsData.h"
+#include "ScrollLabel.h"
 USING_NS_CC;
 class HeroSkillLayer: public CCLayer
 {
@@ -49,6 +50,9 @@ public:
     virtual void update(float dt);
     int curPage;
     void changeData();
+    
+    XJScrollLabel *scrolllabel1;
+    XJScrollLabel *scrolllabel2;
 public:
     CCNode * node2;
     
